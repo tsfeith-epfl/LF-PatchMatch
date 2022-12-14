@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Eigen library
+eigen
+
+# CMake directories
+cmake*
