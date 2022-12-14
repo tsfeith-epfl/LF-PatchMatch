@@ -10,6 +10,18 @@
 
 using namespace std;
 
+vector<string> get_scene_names(const string& scene_dir) {
+    vector<string> scene_names;
+    for (const auto &entry : filesystem::directory_iterator(scene_dir)) {
+        if (entry.path().extension() != ".png") {
+            continue;
+        }
+        scene_names.push_back(entry.path().filename());
+    }
+    sort(scene_names.begin(), scene_names.end());
+    return scene_names;
+}
+
 vector<vector<vector<Eigen::Array<uint8_t, Eigen::Dynamic, Eigen::Dynamic>>>> get_scene_grid(const string& directory_path) {
     vector<vector<vector<Eigen::Array<uint8_t, Eigen::Dynamic, Eigen::Dynamic>>>> scene_grid;
     vector<filesystem::directory_entry> entries;
@@ -284,7 +296,7 @@ void save_data(vector<Eigen::Array<uint8_t, Eigen::Dynamic, Eigen::Dynamic>> dat
         }
     }
 
-    cnpy::npy_save("arr1.npy",
+    cnpy::npy_save(filename,
                    &flat_data[0],
                    {static_cast<unsigned long>(data[0].rows()),static_cast<unsigned long>(data[0].cols()),data.size()},
                    "w");
