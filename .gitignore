@@ -36,3 +36,6 @@ eigen
 
 # CMake directories
 cmake*
+
+# JetBrains things
+.idea/

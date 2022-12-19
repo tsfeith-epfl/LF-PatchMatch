@@ -1,11 +1,10 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.16)
 project(PatchMatch)
 
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(OpenCV REQUIRED)
 
-include_directories(eigen)
 include_directories(src)
 
 add_library(cnpy SHARED "src/cnpy.cpp")
@@ -30,4 +29,4 @@ set(_CXX_FLAGS "-fno-math-errno")
 set(_CXX_FLAGS "-O3")
 add_executable(PatchMatch main.cpp)
 target_link_libraries(PatchMatch ${OpenCV_LIBS} cnpy)
-target_compile_options(PatchMatch PRIVATE ${_CXX_FLAGS})
+target_compile_options(PatchMatch PUBLIC ${_CXX_FLAGS})

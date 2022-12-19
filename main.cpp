@@ -1,23 +1,22 @@
 #include <iostream>
 #include "utils.cpp"
 #include <vector>
-#include <Eigen/Eigen>
 
-int main(int argc, char** argv) {
-
+int main(int argc, char **argv) {
     string scene_dir = argv[1];
-    // measure the execution time
-    vector<vector<vector<Eigen::Array<uint8_t, Eigen::Dynamic, Eigen::Dynamic>>>> scene = get_scene_grid(scene_dir);
+    // measure the execution time without using opencv
+    clock_t start = clock();
+    vector<vector<vector<vector<vector<uint8_t>>>>> scene = get_scene_grid(scene_dir);
     vector<string> scene_names = get_scene_names(scene_dir);
     for (int i = 0; i < scene.size(); i++) {
         for (int j = 0; j < scene[i].size(); j++) {
-            vector<Eigen::Array<uint8_t, Eigen::Dynamic, Eigen::Dynamic>> patches = get_frankenpatches(scene,
-                                                                                                       i,
-                                                                                                       j,
-                                                                                                       6,
-                                                                                                       5,
-                                                                                                       1,
-                                                                                                       20);
+            vector<vector<vector<uint8_t>>> patches = get_frankenpatches(scene,
+                                                                         i,
+                                                                         j,
+                                                                         20,
+                                                                         6,
+                                                                         1,
+                                                                         10);
             string new_name = scene_dir + "/frankenpatches/";
 
             string filename = scene_names[i * scene[i].size() + j];
@@ -30,5 +29,8 @@ int main(int argc, char** argv) {
             save_data(patches, new_name);
         }
     }
+    clock_t end = clock();
+    double elapsed_secs = double(end - start) / CLOCKS_PER_SEC;
+    cout << "Elapsed time: " << elapsed_secs << endl;
     return 0;
 }
