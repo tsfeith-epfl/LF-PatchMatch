@@ -34,10 +34,10 @@ int main(int argc, char **argv) {
 
             new_name += filename;
             save_data(patches, new_name);
-            
+
             int done = i * scene[i].size() + j + 1;
             int total = scene.size() * scene[i].size();
-            cout << "Done: " << done << "/" << total << endl;
+            cout << "Done: " << done << "/" << total << "\t\r" << flush;
         }
     }
     clock_t end = clock();
