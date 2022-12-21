@@ -9,10 +9,17 @@
 
 using namespace std;
 
-vector<string> get_scene_names(const string &scene_dir) {
+vector<string> get_scene_names(const string &scene_dir, int grid_size_0, int grid_size_1) {
     vector<string> scene_names;
     for (const auto &entry: filesystem::directory_iterator(scene_dir)) {
         if (entry.path().extension() != ".png") {
+            continue;
+        }
+        string filename = entry.path().filename();
+        if (stoi(filename.substr(filename.size() - 6, 2)) >= grid_size_1) {
+            continue;
+        }
+        if (stoi(filename.substr(filename.size() - 9, 2)) >= grid_size_0) {
             continue;
         }
         scene_names.push_back(entry.path().filename());
@@ -21,7 +28,9 @@ vector<string> get_scene_names(const string &scene_dir) {
     return scene_names;
 }
 
-vector<vector<vector<vector<vector<uint8_t>>>>> get_scene_grid(const string &directory_path) {
+vector<vector<vector<vector<vector<uint8_t>>>>> get_scene_grid(const string &directory_path,
+                                                               int grid_size_0,
+                                                               int grid_size_1) {
     vector<vector<vector<vector<vector<uint8_t>>>>> scene_grid;
     vector<filesystem::directory_entry> entries;
     for (const auto &entry: filesystem::directory_iterator(directory_path)) {
@@ -38,7 +47,13 @@ vector<vector<vector<vector<vector<uint8_t>>>>> get_scene_grid(const string &dir
         string filename = entry.path().filename().string();
         int row = stoi(filename.substr(filename.length() - 9, 2));
         if (row == scene_grid.size()) {
+            if (scene_grid.size() == grid_size_0) {
+                break;
+            }
             scene_grid.emplace_back();
+        }
+        if (scene_grid[row].size() == grid_size_1) {
+            continue;
         }
         cv::Mat image = cv::imread(entry.path().string());
 

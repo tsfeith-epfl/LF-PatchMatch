@@ -1,0 +1,4 @@
+/home/tsfeith/Documents/SemesterProject_2/LightField_Denoising/denoising_methods/LFDnPatch/LF-PatchMatch/build/CMakeFiles/cnpy.dir
+/home/tsfeith/Documents/SemesterProject_2/LightField_Denoising/denoising_methods/LFDnPatch/LF-PatchMatch/build/CMakeFiles/PatchMatch.dir
+/home/tsfeith/Documents/SemesterProject_2/LightField_Denoising/denoising_methods/LFDnPatch/LF-PatchMatch/build/CMakeFiles/edit_cache.dir
+/home/tsfeith/Documents/SemesterProject_2/LightField_Denoising/denoising_methods/LFDnPatch/LF-PatchMatch/build/CMakeFiles/rebuild_cache.dir
