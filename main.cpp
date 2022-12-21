@@ -33,8 +33,11 @@ int main(int argc, char **argv) {
             filename = filename.substr(0, p) + ".npy";
 
             new_name += filename;
-            cout << new_name << endl;
             save_data(patches, new_name);
+            
+            int done = i * scene[i].size() + j + 1;
+            int total = scene.size() * scene[i].size();
+            cout << "Done: " << done << "/" << total << endl;
         }
     }
     clock_t end = clock();
