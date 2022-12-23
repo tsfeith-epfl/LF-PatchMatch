@@ -30,7 +30,6 @@ void compute_save_patches(const std::string& scene_dir,
     filename = filename.substr(0, p) + ".npy";
 
     new_name += filename;
-    cout << new_name << endl;
     save_data(patches, new_name);
 }
 
