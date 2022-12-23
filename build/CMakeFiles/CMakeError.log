@@ -1,15 +1,15 @@
 Performing C++ SOURCE FILE Test _xhost_works failed with the following output:
 Change Dir: /home/tsfeith/Documents/SemesterProject_2/LightField_Denoising/denoising_methods/LFDnPatch/LF-PatchMatch/build/CMakeFiles/CMakeTmp
 
-Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_4fd14/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_4fd14.dir/build.make CMakeFiles/cmTC_4fd14.dir/build
+Run Build Command(s):/usr/bin/gmake -f Makefile cmTC_aeff3/fast && /usr/bin/gmake  -f CMakeFiles/cmTC_aeff3.dir/build.make CMakeFiles/cmTC_aeff3.dir/build
 gmake[1]: Entering directory '/home/tsfeith/Documents/SemesterProject_2/LightField_Denoising/denoising_methods/LFDnPatch/LF-PatchMatch/build/CMakeFiles/CMakeTmp'
-Building CXX object CMakeFiles/cmTC_4fd14.dir/src.cxx.o
-/usr/bin/c++ -D_xhost_works  -xHost -o CMakeFiles/cmTC_4fd14.dir/src.cxx.o -c /home/tsfeith/Documents/SemesterProject_2/LightField_Denoising/denoising_methods/LFDnPatch/LF-PatchMatch/build/CMakeFiles/CMakeTmp/src.cxx
+Building CXX object CMakeFiles/cmTC_aeff3.dir/src.cxx.o
+/usr/bin/c++ -D_xhost_works  -xHost -o CMakeFiles/cmTC_aeff3.dir/src.cxx.o -c /home/tsfeith/Documents/SemesterProject_2/LightField_Denoising/denoising_methods/LFDnPatch/LF-PatchMatch/build/CMakeFiles/CMakeTmp/src.cxx
 c++: error: language Host not recognized
 c++: error: language Host not recognized
-gmake[1]: *** [CMakeFiles/cmTC_4fd14.dir/build.make:78: CMakeFiles/cmTC_4fd14.dir/src.cxx.o] Error 1
+gmake[1]: *** [CMakeFiles/cmTC_aeff3.dir/build.make:78: CMakeFiles/cmTC_aeff3.dir/src.cxx.o] Error 1
 gmake[1]: Leaving directory '/home/tsfeith/Documents/SemesterProject_2/LightField_Denoising/denoising_methods/LFDnPatch/LF-PatchMatch/build/CMakeFiles/CMakeTmp'
-gmake: *** [Makefile:127: cmTC_4fd14/fast] Error 2
+gmake: *** [Makefile:127: cmTC_aeff3/fast] Error 2
 
 
 Source file was:

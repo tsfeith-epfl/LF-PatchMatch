@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/tsfeith/Documents/SemesterProject_2/LightField_Denoising/denoising_methods/LFDnPatch/LF-PatchMatch/src -isystem /usr/include/opencv4
 
-CXX_FLAGS = -O3
+CXX_FLAGS = -DNDEBUG -fopenmp
 

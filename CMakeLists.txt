@@ -4,6 +4,7 @@ project(PatchMatch)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(OpenCV REQUIRED)
+find_package(OpenMP REQUIRED)
 
 include_directories(src)
 
@@ -27,6 +28,7 @@ endif()
 
 set(_CXX_FLAGS "-fno-math-errno")
 set(_CXX_FLAGS "-O3")
+set(_CXX_FLAGS "-DNDEBUG")
 add_executable(PatchMatch main.cpp)
-target_link_libraries(PatchMatch ${OpenCV_LIBS} cnpy)
 target_compile_options(PatchMatch PUBLIC ${_CXX_FLAGS})
+target_link_libraries(PatchMatch ${OpenCV_LIBS} cnpy OpenMP::OpenMP_CXX)
