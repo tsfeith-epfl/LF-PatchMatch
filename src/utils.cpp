@@ -311,11 +311,11 @@ vector<vector<vector<uint8_t>>> get_frankenpatches(vector<vector<vector<vector<v
 }
 
 void save_data(vector<vector<vector<uint8_t>>> data, const string &filename) {
-    vector<int> flat_data = vector<int>(data.size() * data[0].size() * data[0][0].size());
+    vector<uint8_t> flat_data = vector<uint8_t>(data.size() * data[0].size() * data[0][0].size());
     for (int i = 0; i < data[0].size(); i++) {
         for (int j = 0; j < data[0][0].size(); j++) {
             for (int k = 0; k < data.size(); k++) {
-                flat_data[i * data[0][0].size() * data.size() + j * data.size() + k] = (int) data[k][i][j];
+                flat_data[i * data[0][0].size() * data.size() + j * data.size() + k] = data[k][i][j];
             }
         }
     }
