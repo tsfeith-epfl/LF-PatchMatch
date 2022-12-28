@@ -39,3 +39,6 @@ cmake*
 
 # JetBrains things
 .idea/
+
+# build directory
+build
