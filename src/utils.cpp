@@ -12,10 +12,12 @@ using namespace std;
 vector<string> get_scene_names(const string &scene_dir, int grid_size_0, int grid_size_1) {
     vector<string> scene_names;
     for (const auto &entry: filesystem::directory_iterator(scene_dir)) {
+        // only consider the "png" files
         if (entry.path().extension() != ".png") {
             continue;
         }
         string filename = entry.path().filename();
+        // ignore the view outside of the subgrid selected
         if (stoi(filename.substr(filename.size() - 6, 2)) >= grid_size_1) {
             continue;
         }
@@ -33,6 +35,7 @@ vector<vector<vector<vector<vector<uint8_t>>>>> get_scene_grid(const string &dir
                                                                int grid_size_1) {
     vector<vector<vector<vector<vector<uint8_t>>>>> scene_grid;
     vector<filesystem::directory_entry> entries;
+    // start by getting all the png files in the directory
     for (const auto &entry: filesystem::directory_iterator(directory_path)) {
         if (entry.path().extension() != ".png") {
             continue;
@@ -43,6 +46,8 @@ vector<vector<vector<vector<vector<uint8_t>>>>> get_scene_grid(const string &dir
          [](const filesystem::directory_entry &a, const filesystem::directory_entry &b) {
              return a.path().filename() < b.path().filename();
          });
+
+    // take the sorted filenames, and get them into a grid of size grid_size_0 x grid_size_1
     for (const auto &entry: entries) {
         string filename = entry.path().filename().string();
         int row = stoi(filename.substr(filename.length() - 9, 2));
@@ -55,8 +60,10 @@ vector<vector<vector<vector<vector<uint8_t>>>>> get_scene_grid(const string &dir
         if (scene_grid[row].size() == grid_size_1) {
             continue;
         }
+        // use openCV to read the image
         cv::Mat image = cv::imread(entry.path().string());
 
+        // openCV uses the colour space BGR, so we need to convert it to RGB
         vector<vector<vector<uint8_t>>> data = vector<vector<vector<uint8_t>>>(3, vector<vector<uint8_t>>(image.rows,
                                                                                                           vector<uint8_t>(
                                                                                                                   image.cols)));
@@ -78,11 +85,15 @@ vector<vector<vector<uint8_t>>> limited_insert(vector<vector<vector<uint8_t>>> m
                                                vector<vector<vector<uint8_t>>> best_patch,
                                                int min_diff,
                                                int max_size) {
+    // if the differences vector is not full yet, just add the new patch
     if (differences.size() < max_size) {
         matching_patches.emplace_back(best_patch[0]);
         matching_patches.emplace_back(best_patch[1]);
         matching_patches.emplace_back(best_patch[2]);
         differences.emplace_back(min_diff);
+        // check to see if it is now full
+        // if it is, sort the differences vector and the matching patches vector jointly
+        // we're using a bubble sort here, but it should be fine since the vector is small (~<10)
         if (differences.size() == max_size) {
             for (int i = 0; i < differences.size(); i++) {
                 for (int j = i + 1; j < differences.size(); j++) {
@@ -105,9 +116,11 @@ vector<vector<vector<uint8_t>>> limited_insert(vector<vector<vector<uint8_t>>> m
             }
         }
     } else {
+        // if the differences vector is full, check to see if the new patch is better than the worst one
         if (min_diff >= differences[max_size - 1]) {
             return matching_patches;
         }
+        // if it is, put it in the right place in the vector using binary search (since the vector is sorted)
         int left = 0;
         int right = max_size - 1;
         while (left < right) {
@@ -144,6 +157,8 @@ vector<vector<vector<uint8_t>>> get_matching_patches(vector<vector<vector<vector
     patchsize[0] = min((int) grid[i][j][0].size() - start_row, patch_size);
     patchsize[1] = min((int) grid[i][j][0][0].size() - start_col, patch_size);
 
+    // simple array from 0 -> height-1 or width-1, excluding i or j, respectively
+    // this can be optimized (it used to be more complicated)
     vector<int> grid_h, grid_v;
     for (int k = 0; k < grid.size(); k++) {
         if (k == i) {
@@ -158,8 +173,6 @@ vector<vector<vector<uint8_t>>> get_matching_patches(vector<vector<vector<vector
         grid_h.emplace_back(k);
     }
 
-
-    // create empty vectors
     vector<vector<vector<uint8_t>>> matching_patches;
     vector<int> differences;
     vector<int> prev_position = {start_row, start_col};
@@ -167,8 +180,10 @@ vector<vector<vector<uint8_t>>> get_matching_patches(vector<vector<vector<vector
     vector<int> search_space;
     for (auto h: grid_h) {
         int min_difference = 1e8;
-        // new_image = grid[i][h]
+        // reset the search space for every new view
         search_space.clear();
+        // get all the valid elements in the search space
+        // maybe there's a faster way to do this?
         for (int k = -roi; k <= roi; k++) {
             if (prev_position[1] + k * search_stride >= 0 and
                 prev_position[1] + k * search_stride + patchsize[1] <= grid[i][h][0][0].size()) {
@@ -179,6 +194,8 @@ vector<vector<vector<uint8_t>>> get_matching_patches(vector<vector<vector<vector
 
         for (auto pos: search_space) {
             int difference = 0;
+            // get the L1 difference between the reference patch and the current patch
+            // using new variables would make it easier to read, but it's faster to just access the grid
             for (int k = 0; k < 3; k++) {
                 for (int l = 0; l < patchsize[0]; l++) {
                     for (int m = 0; m < patchsize[1]; m++) {
@@ -186,6 +203,7 @@ vector<vector<vector<uint8_t>>> get_matching_patches(vector<vector<vector<vector
                     }
                 }
             }
+            // if the difference is less than the minimum difference, update the minimum difference
             if (difference < min_difference) {
                 min_difference = difference;
                 prev_position = {prev_position[0], pos};
@@ -203,9 +221,9 @@ vector<vector<vector<uint8_t>>> get_matching_patches(vector<vector<vector<vector
         matching_patches = limited_insert(matching_patches, differences, best_patch, min_difference, num_similar);
     }
 
+    // same thing as above, but for the vertical search space
     for (auto v: grid_v) {
         int min_difference = 1e8;
-        // new_image = grid[v][h]
         search_space.clear();
         for (int k = -roi; k <= roi; k++) {
             if (prev_position[0] + k * search_stride >= 0 and
