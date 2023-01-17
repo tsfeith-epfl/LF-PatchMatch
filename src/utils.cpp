@@ -98,19 +98,11 @@ vector<vector<vector<uint8_t>>> limited_insert(vector<vector<vector<uint8_t>>> m
             for (int i = 0; i < differences.size(); i++) {
                 for (int j = i + 1; j < differences.size(); j++) {
                     if (differences[i] > differences[j]) {
-                        int temp = differences[i];
-                        differences[i] = differences[j];
-                        differences[j] = temp;
+                        swap(differences[i], differences[j]);
 
-                        vector<vector<uint8_t>> temp_patch1 = matching_patches[3 * i];
-                        vector<vector<uint8_t>> temp_patch2 = matching_patches[3 * i + 1];
-                        vector<vector<uint8_t>> temp_patch3 = matching_patches[3 * i + 2];
-                        matching_patches[3 * i] = matching_patches[3 * j];
-                        matching_patches[3 * i + 1] = matching_patches[3 * j + 1];
-                        matching_patches[3 * i + 2] = matching_patches[3 * j + 2];
-                        matching_patches[3 * j] = temp_patch1;
-                        matching_patches[3 * j + 1] = temp_patch2;
-                        matching_patches[3 * j + 2] = temp_patch3;
+                        swap(matching_patches[i * 3], matching_patches[j * 3]);
+                        swap(matching_patches[i * 3 + 1], matching_patches[j * 3 + 1]);
+                        swap(matching_patches[i * 3 + 2], matching_patches[j * 3 + 2]);
                     }
                 }
             }
