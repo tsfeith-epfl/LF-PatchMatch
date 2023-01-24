@@ -48,7 +48,8 @@ int main(int argc, char **argv) {
     int stride = stoi(argv[6]);
     int roi = stoi(argv[7]);
 
-    clock_t start = clock();
+    chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
+
     // get the views as uint8_t and the names of each view
     vector<vector<vector<vector<vector<uint8_t>>>>> scene = get_scene_grid(scene_dir, grid_size_0, grid_size_1);
     vector<string> scene_names = get_scene_names(scene_dir, grid_size_0, grid_size_1);
@@ -61,8 +62,9 @@ int main(int argc, char **argv) {
         }
     }
 
-    clock_t end = clock();
-    double elapsed_secs = double(end - start) / CLOCKS_PER_SEC;
-    cout << "Elapsed time: " << elapsed_secs << endl;
+    chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
+    // get the time in milliseconds
+    auto duration = chrono::duration_cast<chrono::milliseconds>( t2 - t1 ).count();
+    cout << "Time taken: " << duration << " milliseconds" << endl;
     return 0;
 }

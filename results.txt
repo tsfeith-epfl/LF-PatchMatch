@@ -1,0 +1,37 @@
+24/01
+Improvement:
+    - Use std::swap instead of manually doing the swap (less memory allocations)
+
+NUM PIXELS       PATCH MATCHING TIME (s)
+  6528              1.96
+ 26112              9.94
+ 58944             25.00
+104704             64.99
+163840            124.92
+235776            233.87
+320768            350.30
+418509            576.73
+530496            757.18
+655360           1137.72
+
+Fit to y=a*x^b+c => y = 5.350746e-7*x^1.602221+4.405051
+
+
+24/01
+Improvement:
+    - Don't send patches around, just send top-left corner coordinates
+    - Improve algorithm accuracy (had some mistakes)
+    
+NUM PIXELS       PATCH MATCHING TIME (s)
+  6528              1.41
+ 26112              6.56
+ 58944             18.19
+104704             40.74
+163840             97.51
+235776            179.93
+320768            303.48 
+418509            496.30
+530496            818.18
+655360           1442.26
+
+Fit to y=a*x^b+c => y = 
