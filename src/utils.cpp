@@ -80,11 +80,11 @@ vector<vector<vector<vector<vector<uint8_t>>>>> get_scene_grid(const string &dir
     return scene_grid;
 }
 
-vector<vector<int>> limited_insert(vector<vector<int>> matching_patches,
-                                   vector<int> &differences,
-                                   vector<int> best_patch,
-                                   int min_diff,
-                                   int max_size) {
+void limited_insert(vector<vector<int>> &matching_patches,
+                    vector<uint8_t> &differences,
+                    const vector<int> &best_patch,
+                    int min_diff,
+                    int max_size) {
     // if the differences vector is not full yet, just add the new patch
     if (differences.size() < max_size) {
         matching_patches.emplace_back(best_patch);
@@ -105,11 +105,13 @@ vector<vector<int>> limited_insert(vector<vector<int>> matching_patches,
     } else {
         // if the differences vector is full, check to see if the new patch is better than the worst one
         if (min_diff >= differences[max_size - 1]) {
-            return matching_patches;
+            return;
         }
         // if it is, put it in the right place in the vector using binary search (since the vector is sorted)
+        differences.pop_back();
+        matching_patches.pop_back();
         int left = 0;
-        int right = max_size - 1;
+        int right = max_size - 2;
         while (left < right) {
             int mid = (left + right) / 2;
             if (differences[mid] < min_diff) {
@@ -119,11 +121,8 @@ vector<vector<int>> limited_insert(vector<vector<int>> matching_patches,
             }
         }
         differences.insert(differences.begin() + left, min_diff);
-        differences.pop_back();
         matching_patches.insert(matching_patches.begin() + left, best_patch);
-        matching_patches.pop_back();
     }
-    return matching_patches;
 }
 
 vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint8_t>>>>> grid,
@@ -154,11 +153,11 @@ vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint
     }
 
     vector<vector<int>> matching_patches;
-    vector<int> differences;
+    vector<uint8_t> differences;
     vector<int> prev_position = {start_row, start_col};
 
-    for (auto h : imgs_right) {
-        int min_difference = 1e8;
+    for (auto h: imgs_right) {
+        uint8_t min_difference = 255;
         for (int a = -roi; a <= roi; a++) {
             if (prev_position[1] + a * search_stride < 0 or
                 prev_position[1] + a * search_stride + patchsize[1] > grid[i][h][0][0].size()) {
@@ -171,22 +170,25 @@ vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint
             for (int k = 0; k < 3; k++) {
                 for (int l = 0; l < patchsize[0]; l++) {
                     for (int m = 0; m < patchsize[1]; m++) {
-                        difference += abs(grid[i][h][k][prev_position[0] + l][pos + m] - grid[i][j][k][start_row + l][start_col + m]);
+                        difference += abs(grid[i][h][k][prev_position[0] + l][pos + m] -
+                                       grid[i][j][k][start_row + l][start_col + m]);
                     }
                 }
             }
+            difference /= 3 * patchsize[0] * patchsize[1];
+
             if (difference < min_difference) {
-                min_difference = difference;
+                min_difference = (uint8_t) difference;
                 prev_position = {prev_position[0], pos};
             }
         }
-        vector<int> best_patch = {i, h, prev_position[0], prev_position[1]};
-        matching_patches = limited_insert(matching_patches, differences, best_patch, min_difference, num_similar);
+        limited_insert(matching_patches, differences, {i, h, prev_position[0], prev_position[1]}, min_difference,
+                       num_similar);
     }
 
     prev_position = {start_row, start_col};
-    for (auto h : imgs_left) {
-        int min_difference = 1e8;
+    for (auto h: imgs_left) {
+        int min_difference = 255;
         for (int a = -roi; a <= roi; a++) {
             if (prev_position[1] + a * search_stride < 0 or
                 prev_position[1] + a * search_stride + patchsize[1] > grid[i][h][0][0].size()) {
@@ -201,18 +203,19 @@ vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint
                     }
                 }
             }
+            difference /= 3 * patchsize[0] * patchsize[1];
             if (difference < min_difference) {
-                min_difference = difference;
+                min_difference = (uint8_t) difference;
                 prev_position = {prev_position[0], pos};
             }
         }
-        vector<int> best_patch = {i, h, prev_position[0], prev_position[1]};
-        matching_patches = limited_insert(matching_patches, differences, best_patch, min_difference, num_similar);
+        limited_insert(matching_patches, differences, {i, h, prev_position[0], prev_position[1]}, min_difference,
+                       num_similar);
     }
 
     prev_position = {start_row, start_col};
-    for (auto h : imgs_down) {
-        int min_difference = 1e8;
+    for (auto h: imgs_down) {
+        int min_difference = 255;
         for (int a = -roi; a <= roi; a++) {
             if (prev_position[0] + a * search_stride < 0 or
                 prev_position[0] + a * search_stride + patchsize[0] > grid[h][j][0].size()) {
@@ -223,22 +226,23 @@ vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint
             for (int k = 0; k < 3; k++) {
                 for (int l = 0; l < patchsize[0]; l++) {
                     for (int m = 0; m < patchsize[1]; m++) {
-                        difference += abs(grid[h][j][k][pos + l][prev_position[1] + m] - grid[i][j][k][start_row + l][start_col + m]);
+                        difference += abs(grid[i][h][k][prev_position[0] + l][pos + m] - grid[i][j][k][start_row + l][start_col + m]);
                     }
                 }
             }
+            difference /= 3 * patchsize[0] * patchsize[1];
             if (difference < min_difference) {
-                min_difference = difference;
+                min_difference = (uint8_t) difference;
                 prev_position = {pos, prev_position[1]};
             }
         }
-        vector<int> best_patch = {h, j, prev_position[0], prev_position[1]};
-        matching_patches = limited_insert(matching_patches, differences, best_patch, min_difference, num_similar);
+        limited_insert(matching_patches, differences, {h, j, prev_position[0], prev_position[1]}, min_difference,
+                       num_similar);
     }
 
     prev_position = {start_row, start_col};
-    for (auto h : imgs_up) {
-        int min_difference = 1e8;
+    for (auto h: imgs_up) {
+        int min_difference = 255;
         for (int a = -roi; a <= roi; a++) {
             if (prev_position[0] + a * search_stride < 0 or
                 prev_position[0] + a * search_stride + patchsize[0] > grid[h][j][0].size()) {
@@ -249,17 +253,17 @@ vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint
             for (int k = 0; k < 3; k++) {
                 for (int l = 0; l < patchsize[0]; l++) {
                     for (int m = 0; m < patchsize[1]; m++) {
-                        difference += abs(grid[h][j][k][pos + l][prev_position[1] + m] - grid[i][j][k][start_row + l][start_col + m]);
+                        difference += abs(grid[i][h][k][prev_position[0] + l][pos + m] - grid[i][j][k][start_row + l][start_col + m]);
                     }
                 }
             }
             if (difference < min_difference) {
-                min_difference = difference;
+                min_difference = (uint8_t) difference;
                 prev_position = {pos, prev_position[1]};
             }
         }
-        vector<int> best_patch = {h, j, prev_position[0], prev_position[1]};
-        matching_patches = limited_insert(matching_patches, differences, best_patch, min_difference, num_similar);
+        limited_insert(matching_patches, differences, {h, j, prev_position[0], prev_position[1]}, min_difference,
+                       num_similar);
     }
     return matching_patches;
 }
@@ -276,16 +280,8 @@ vector<vector<vector<uint8_t>>> get_frankenpatches(vector<vector<vector<vector<v
                                                                                      grid[i][j][0].size(),
                                                                                      vector<uint8_t>(
                                                                                              grid[i][j][0][0].size())));
-    vector<int> h_pos, w_pos;
     for (int h = 0; h < grid[i][j][0].size(); h += patch_size) {
-        h_pos.emplace_back(h);
-    }
-    for (int w = 0; w < grid[i][j][0][0].size(); w += patch_size) {
-        w_pos.emplace_back(w);
-    }
-
-    for (auto h: h_pos) {
-        for (auto w: w_pos) {
+        for (int w = 0; w < grid[i][j][0][0].size(); w += patch_size) {
             vector<vector<int>> matching_patches = get_matching_patches(grid,
                                                                         i,
                                                                         j,
