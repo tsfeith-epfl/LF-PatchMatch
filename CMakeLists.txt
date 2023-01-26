@@ -28,8 +28,6 @@ endif()
 
 set(_CXX_FLAGS "-fno-math-errno")
 set(_CXX_FLAGS "-DNDEBUG")
-set(_CXX_FLAGS "-flto")
-set(_CXX_FLAGS "-funroll-loops")
 set(_CXX_FLAGS "-O3")
 add_executable(PatchMatch main.cpp)
 target_compile_options(PatchMatch PUBLIC ${_CXX_FLAGS})

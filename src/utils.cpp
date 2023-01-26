@@ -167,12 +167,14 @@ vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint
             int difference = 0;
             // get the L1 difference between the reference patch and the current patch
             // using new variables would make it easier to read, but it's faster to just access the grid
-            for (int k = 0; k < 3; k++) {
-                for (int l = 0; l < patchsize[0]; l++) {
-                    for (int m = 0; m < patchsize[1]; m++) {
-                        difference += abs(grid[i][h][k][prev_position[0] + l][pos + m] -
-                                       grid[i][j][k][start_row + l][start_col + m]);
-                    }
+            for (int l = 0; l < patchsize[0]; l++) {
+                for (int m = 0; m < patchsize[1]; m++) {
+                    difference += abs(grid[i][h][0][prev_position[0] + l][pos + m] -
+                                      grid[i][j][0][start_row + l][start_col + m]);
+                    difference += abs(grid[i][h][1][prev_position[0] + l][pos + m] -
+                                      grid[i][j][1][start_row + l][start_col + m]);
+                    difference += abs(grid[i][h][2][prev_position[0] + l][pos + m] -
+                                      grid[i][j][2][start_row + l][start_col + m]);
                 }
             }
             difference /= 3 * patchsize[0] * patchsize[1];
@@ -196,11 +198,14 @@ vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint
             }
             int pos = prev_position[1] + a * search_stride;
             int difference = 0;
-            for (int k = 0; k < 3; k++) {
-                for (int l = 0; l < patchsize[0]; l++) {
-                    for (int m = 0; m < patchsize[1]; m++) {
-                        difference += abs(grid[i][h][k][prev_position[0] + l][pos + m] - grid[i][j][k][start_row + l][start_col + m]);
-                    }
+            for (int l = 0; l < patchsize[0]; l++) {
+                for (int m = 0; m < patchsize[1]; m++) {
+                    difference += abs(
+                            grid[i][h][0][prev_position[0] + l][pos + m] - grid[i][j][0][start_row + l][start_col + m]);
+                    difference += abs(
+                            grid[i][h][1][prev_position[0] + l][pos + m] - grid[i][j][1][start_row + l][start_col + m]);
+                    difference += abs(
+                            grid[i][h][2][prev_position[0] + l][pos + m] - grid[i][j][2][start_row + l][start_col + m]);
                 }
             }
             difference /= 3 * patchsize[0] * patchsize[1];
@@ -223,11 +228,14 @@ vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint
             }
             int pos = prev_position[0] + a * search_stride;
             int difference = 0;
-            for (int k = 0; k < 3; k++) {
-                for (int l = 0; l < patchsize[0]; l++) {
-                    for (int m = 0; m < patchsize[1]; m++) {
-                        difference += abs(grid[i][h][k][prev_position[0] + l][pos + m] - grid[i][j][k][start_row + l][start_col + m]);
-                    }
+            for (int l = 0; l < patchsize[0]; l++) {
+                for (int m = 0; m < patchsize[1]; m++) {
+                    difference += abs(
+                            grid[i][h][0][prev_position[0] + l][pos + m] - grid[i][j][0][start_row + l][start_col + m]);
+                    difference += abs(
+                            grid[i][h][1][prev_position[0] + l][pos + m] - grid[i][j][1][start_row + l][start_col + m]);
+                    difference += abs(
+                            grid[i][h][2][prev_position[0] + l][pos + m] - grid[i][j][2][start_row + l][start_col + m]);
                 }
             }
             difference /= 3 * patchsize[0] * patchsize[1];
@@ -250,11 +258,14 @@ vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint
             }
             int pos = prev_position[0] + a * search_stride;
             int difference = 0;
-            for (int k = 0; k < 3; k++) {
-                for (int l = 0; l < patchsize[0]; l++) {
-                    for (int m = 0; m < patchsize[1]; m++) {
-                        difference += abs(grid[i][h][k][prev_position[0] + l][pos + m] - grid[i][j][k][start_row + l][start_col + m]);
-                    }
+            for (int l = 0; l < patchsize[0]; l++) {
+                for (int m = 0; m < patchsize[1]; m++) {
+                    difference += abs(
+                            grid[i][h][0][prev_position[0] + l][pos + m] - grid[i][j][0][start_row + l][start_col + m]);
+                    difference += abs(
+                            grid[i][h][1][prev_position[0] + l][pos + m] - grid[i][j][1][start_row + l][start_col + m]);
+                    difference += abs(
+                            grid[i][h][2][prev_position[0] + l][pos + m] - grid[i][j][2][start_row + l][start_col + m]);
                 }
             }
             if (difference < min_difference) {
