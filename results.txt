@@ -35,3 +35,23 @@ NUM PIXELS       PATCH MATCHING TIME (s)
 655360           1442.26
 
 Fit to y=a*x^b+c => y = 
+
+
+ON SERVER (it's faster)
+
+25/01
+Improvement:
+    - Smarter compiler flags
+    - Manually unroll loops to improve compiler optimizations
+
+NUM PIXELS       PATCH MATCHING TIME (s)
+  6528           0.156   
+ 26112           0.989
+ 58944           4.119  
+104704           10.923  
+163840           23.054 
+235776           46.277
+320768           81.080
+418509           131.999 
+530496           211.373
+655360           324.291

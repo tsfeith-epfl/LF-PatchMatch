@@ -54,7 +54,6 @@ int main(int argc, char **argv) {
     vector<vector<vector<vector<vector<uint8_t>>>>> scene = get_scene_grid(scene_dir, grid_size_0, grid_size_1);
     vector<string> scene_names = get_scene_names(scene_dir, grid_size_0, grid_size_1);
 
-    // apply parallelization to compute and save the patches
     #pragma omp parallel for default(none) shared(scene_dir, scene, scene_names, patch_size, num_patches, stride, roi)
     for (int i = 0; i < scene.size(); i++) {
         for (int j = 0; j < scene[i].size(); j++) {

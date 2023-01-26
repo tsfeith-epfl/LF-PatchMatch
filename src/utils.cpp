@@ -83,12 +83,12 @@ vector<vector<vector<vector<vector<uint8_t>>>>> get_scene_grid(const string &dir
 void limited_insert(vector<vector<int>> &matching_patches,
                     vector<uint8_t> &differences,
                     const vector<int> &best_patch,
-                    int min_diff,
+                    uint8_t min_diff,
                     int max_size) {
     // if the differences vector is not full yet, just add the new patch
     if (differences.size() < max_size) {
         matching_patches.emplace_back(best_patch);
-        differences.push_back(min_diff);
+        differences.emplace_back(min_diff);
         // check to see if it is now full
         // if it is, sort the differences vector and the matching patches vector jointly
         // we're using a bubble sort here, but it should be fine since the vector is small (~<10)
@@ -138,25 +138,12 @@ vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint
     patchsize[0] = min((int) grid[i][j][0].size() - start_row, patch_size);
     patchsize[1] = min((int) grid[i][j][0][0].size() - start_col, patch_size);
 
-    vector<int> imgs_left, imgs_right, imgs_up, imgs_down;
-    for (int k = i + 1; k < grid.size(); k++) {
-        imgs_down.push_back(k);
-    }
-    for (int k = i - 1; k >= 0; k--) {
-        imgs_up.push_back(k);
-    }
-    for (int k = j + 1; k < grid[i].size(); k++) {
-        imgs_right.push_back(k);
-    }
-    for (int k = j - 1; k >= 0; k--) {
-        imgs_left.push_back(k);
-    }
-
     vector<vector<int>> matching_patches;
     vector<uint8_t> differences;
     vector<int> prev_position = {start_row, start_col};
 
-    for (auto h: imgs_right) {
+    // search to the views on the right
+    for (int h = j + 1; h < grid[i].size(); h++) {
         uint8_t min_difference = 255;
         for (int a = -roi; a <= roi; a++) {
             if (prev_position[1] + a * search_stride < 0 or
@@ -188,8 +175,9 @@ vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint
                        num_similar);
     }
 
+    // search to the views on the left
     prev_position = {start_row, start_col};
-    for (auto h: imgs_left) {
+    for (int h = j - 1; h >= 0; h--) {
         int min_difference = 255;
         for (int a = -roi; a <= roi; a++) {
             if (prev_position[1] + a * search_stride < 0 or
@@ -218,8 +206,9 @@ vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint
                        num_similar);
     }
 
+    // search to the views on the bottom
     prev_position = {start_row, start_col};
-    for (auto h: imgs_down) {
+    for (int h = i + 1; h < grid.size(); h++) {
         int min_difference = 255;
         for (int a = -roi; a <= roi; a++) {
             if (prev_position[0] + a * search_stride < 0 or
@@ -248,8 +237,9 @@ vector<vector<int>> get_matching_patches(vector<vector<vector<vector<vector<uint
                        num_similar);
     }
 
+    // search to the views on the top
     prev_position = {start_row, start_col};
-    for (auto h: imgs_up) {
+    for (int h = j - 1; h >= 0; h--) {
         int min_difference = 255;
         for (int a = -roi; a <= roi; a++) {
             if (prev_position[0] + a * search_stride < 0 or
@@ -315,10 +305,12 @@ vector<vector<vector<uint8_t>>> get_frankenpatches(vector<vector<vector<vector<v
             for (int k = 0; k < matching_patches.size(); k++) {
                 for (int l = 0; l < patchsize[0]; l++) {
                     for (int m = 0; m < patchsize[1]; m++) {
-                        for (int n = 0; n < 3; n++) {
-                            output[k * 3 + n][h + l][w + m] = grid[matching_patches[k][0]][matching_patches[k][1]][n][
-                                    matching_patches[k][2] + l][matching_patches[k][3] + m];
-                        }
+                        output[k * 3 + 0][h + l][w + m] = grid[matching_patches[k][0]][matching_patches[k][1]][0][
+                                matching_patches[k][2] + l][matching_patches[k][3] + m];
+                        output[k * 3 + 1][h + l][w + m] = grid[matching_patches[k][0]][matching_patches[k][1]][1][
+                                matching_patches[k][2] + l][matching_patches[k][3] + m];
+                        output[k * 3 + 2][h + l][w + m] = grid[matching_patches[k][0]][matching_patches[k][1]][2][
+                                matching_patches[k][2] + l][matching_patches[k][3] + m];
                     }
                 }
             }
